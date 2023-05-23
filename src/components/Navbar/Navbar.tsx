@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { OnChangeProps } from "../../@types";
 import { Input } from "antd";
+import { Link } from "react-router-dom";
 
-const Navbar: React.FC = () => {
+const Navbar = () => {
   const [searchText, setSearchText] = useState("");
   const { Search } = Input;
 
@@ -19,7 +20,7 @@ const Navbar: React.FC = () => {
     <section>
       <div className="flex justify-between items-center px-[10%]">
         <img
-          src="/cube.svg"
+          src="/assets/cube.svg"
           alt="cube_logo"
           className="w-[20rem] h-[10rem] object-cover cursor-pointer"
         />
@@ -35,8 +36,12 @@ const Navbar: React.FC = () => {
           />
         </form>
         <div className="flex space-x-[1.4rem] text-[2rem]">
-          <h1 className="cursor-pointer hover:text-sky-500">로그인</h1>
-          <h1 className="cursor-pointer hover:text-sky-500">회원가입</h1>
+          <Link to="/login" className="cursor-pointer hover:text-sky-500">
+            로그인
+          </Link>
+          <Link to="/register" className="cursor-pointer hover:text-sky-500">
+            회원가입
+          </Link>
         </div>
       </div>
       <hr />

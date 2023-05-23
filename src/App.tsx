@@ -1,24 +1,18 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import Navbar from "./components/Navbar/Navbar";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import { Home, Login, Register } from "./pages";
+import { Navbar } from "./components";
 
 const App: React.FC = () => {
-  const [mockData, setMockData] = useState([]);
-
-  console.log(mockData);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios("/data/전국평생학습강좌표준데이터.json");
-      setMockData(response.data);
-    };
-    fetchData();
-  }, []);
-
   return (
-    <div className="w-[100%]">
+    <>
       <Navbar />
-    </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+      </Routes>
+    </>
   );
 };
 
