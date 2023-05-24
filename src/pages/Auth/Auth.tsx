@@ -34,7 +34,6 @@ const Auth = () => {
             className="w-full h-full object-cover block min-h-[35rem] max-h-[40rem] pr-[25%]"
           />
         </div>
-
         <Outlet />
       </div>
     </section>

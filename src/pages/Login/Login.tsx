@@ -11,7 +11,7 @@ const Login = () => {
       <div className="w-full flex rounded-3xl overflow-hidden min-h-[5rem] h-full">
         <Link
           to="/auth/login"
-          className="bg-[#fff] px-[2rem] py-[1.2rem] text-[#0078ff] text-[1.8rem] font-extrabold flex-1 text-center"
+          className="bg-[#fff] px-[2rem] py-[1.2rem] text-[#0078ff] text-[1.8rem] font-extrabold flex-1 text-center overflow-hidden"
         >
           로그인
         </Link>
