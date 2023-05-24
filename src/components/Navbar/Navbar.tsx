@@ -19,11 +19,13 @@ const Navbar = () => {
   return (
     <section>
       <div className="flex justify-between items-center px-[10%]">
-        <img
-          src="/assets/cube.svg"
-          alt="cube_logo"
-          className="w-[20rem] h-[10rem] object-cover cursor-pointer"
-        />
+        <Link to="/">
+          <img
+            src="/assets/cube.svg"
+            alt="cube_logo"
+            className="w-[20rem] h-[10rem] object-cover cursor-pointer"
+          />
+        </Link>
         <form onSubmit={onSubmit}>
           <Search
             placeholder="검색어를 입력하세요"
@@ -36,10 +38,13 @@ const Navbar = () => {
           />
         </form>
         <div className="flex space-x-[1.4rem] text-[2rem]">
-          <Link to="/login" className="cursor-pointer hover:text-sky-500">
+          <Link to="/auth/login" className="cursor-pointer hover:text-sky-500">
             로그인
           </Link>
-          <Link to="/register" className="cursor-pointer hover:text-sky-500">
+          <Link
+            to="/auth/register"
+            className="cursor-pointer hover:text-sky-500"
+          >
             회원가입
           </Link>
         </div>
