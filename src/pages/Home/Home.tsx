@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Carousel, DatePicker, Slider, Pagination } from "antd";
 import axios from "axios";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 interface Field {
   [key: number]: { id: string };
@@ -27,22 +27,21 @@ const Home = () => {
     records: { items: [], images: [] },
   });
 
-  // const [page, setPage] = useState(1);
   const [perpage, setPerpage] = useState(12);
   const [price, setPrice] = useState(0);
-  const { fields, records } = lectureData;
+  const { records } = lectureData;
   const [searchParams, setSearchParams] = useSearchParams();
-  const page = Number(searchParams.get("page"));
+  const page = searchParams.get("page");
+  const navigate = useNavigate();
 
   const onChange = (value: number | [number, number]) => {
     console.log(value);
   };
 
-  console.log(page);
-
   const paginationOnChange: any = (page: number) => {
     searchParams.set("page", String(page));
     setSearchParams(searchParams);
+    navigate(`/?page=${page}`);
   };
 
   const newDatas: any = records.images.map((x, i) => {
@@ -75,7 +74,7 @@ const Home = () => {
     };
 
     fetchData();
-  }, []);
+  }, [page, searchParams]);
 
   return (
     <div>
@@ -207,8 +206,7 @@ const Home = () => {
           </div>
           <div className="text-[3.6rem] py-[5rem] flex justify-center">
             <Pagination
-              current={page}
-              defaultCurrent={page}
+              defaultCurrent={Number(page)}
               pageSize={perpage}
               pageSizeOptions={[10, 20, 30]}
               total={records.items.length}
