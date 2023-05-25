@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Carousel } from "antd";
+import { Carousel, DatePicker, Slider, Pagination } from "antd";
 import axios from "axios";
-import { Slider } from "antd";
+import { useSearchParams } from "react-router-dom";
 
 interface Field {
   [key: number]: { id: string };
@@ -27,27 +27,31 @@ const Home = () => {
     records: { items: [], images: [] },
   });
 
-  const [page, setPage] = useState(12);
+  // const [page, setPage] = useState(1);
   const [perpage, setPerpage] = useState(12);
   const [price, setPrice] = useState(0);
   const { fields, records } = lectureData;
-
-  console.log(lectureData);
-  console.log(Math.max(...records.items.map((x: any) => +x.수강료)));
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = Number(searchParams.get("page"));
 
   const onChange = (value: number | [number, number]) => {
-    console.log("onChange: ", value);
+    console.log(value);
+  };
+
+  console.log(page);
+
+  const paginationOnChange: any = (page: number) => {
+    searchParams.set("page", String(page));
+    setSearchParams(searchParams);
   };
 
   const newDatas: any = records.images.map((x, i) => {
     const combileData = {
       imageUrl: x,
-      itemData: records.items.slice(0, 12)[i],
+      itemData: records.items.slice(0, perpage)[i],
     };
     return combileData;
   });
-
-  console.log(newDatas);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,8 +68,12 @@ const Home = () => {
         records: { items: response.data.records, images },
       };
 
+      const pageInt = page;
+      searchParams.set("page", String(pageInt));
+      setSearchParams(searchParams);
       setLectureData(datas);
     };
+
     fetchData();
   }, []);
 
@@ -135,14 +143,18 @@ const Home = () => {
         </div>
 
         <div className="">
-          <div className="text-[3rem]">
+          <div className="text-[3rem] flex gap-[1.6rem] mb-[4rem] items-center">
+            <label>날짜</label>
+            <DatePicker.RangePicker className="flex-[0.5] mr-[10rem]" />
+            <label>가격</label>
             <Slider
-              defaultValue={[0, 1000000]}
+              defaultValue={[0, 2000000]}
               onChange={onChange}
               min={0}
               max={2000000}
               step={1000}
               range
+              className="flex-[0.8]"
             />
           </div>
           <div className="grid grid-cols-3 gap-[3.6rem]">
@@ -152,7 +164,6 @@ const Home = () => {
                 className="text-[2rem] font-medium border w-full h-full hover:shadow-lg cursor-pointer"
               >
                 <img
-                  loading="lazy"
                   src={x.imageUrl}
                   alt="img"
                   className="w-full h-[20rem] block object-cover"
@@ -194,7 +205,16 @@ const Home = () => {
               </div>
             ))}
           </div>
-          <div className="text-[3.6rem] py-[5rem]">페이지 영역</div>
+          <div className="text-[3.6rem] py-[5rem] flex justify-center">
+            <Pagination
+              current={page}
+              defaultCurrent={page}
+              pageSize={perpage}
+              pageSizeOptions={[10, 20, 30]}
+              total={records.items.length}
+              onChange={paginationOnChange}
+            />
+          </div>
         </div>
       </div>
     </div>
