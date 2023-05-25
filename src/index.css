@@ -37,5 +37,5 @@ body {
 
 .ant-carousel .slick-dots li.slick-active button {
   opacity: 1;
-  background: #000;
+  background: #fff;
 }

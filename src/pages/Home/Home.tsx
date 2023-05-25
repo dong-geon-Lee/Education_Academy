@@ -1,15 +1,81 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Carousel } from "antd";
+import axios from "axios";
+import { Slider } from "antd";
+
+interface Field {
+  [key: number]: { id: string };
+}
+
+interface Record {
+  items: string[];
+  images: string[];
+}
+
+interface LectureData {
+  fields: Field;
+  records: Record;
+}
+
+interface UrlProps {
+  urls: { full: string };
+}
 
 const Home = () => {
+  const [lectureData, setLectureData] = useState<LectureData>({
+    fields: {},
+    records: { items: [], images: [] },
+  });
+
+  const [page, setPage] = useState(12);
+  const [perpage, setPerpage] = useState(12);
+  const [price, setPrice] = useState(0);
+  const { fields, records } = lectureData;
+
+  console.log(lectureData);
+  console.log(Math.max(...records.items.map((x: any) => +x.수강료)));
+
+  const onChange = (value: number | [number, number]) => {
+    console.log("onChange: ", value);
+  };
+
+  const newDatas: any = records.images.map((x, i) => {
+    const combileData = {
+      imageUrl: x,
+      itemData: records.items.slice(0, 12)[i],
+    };
+    return combileData;
+  });
+
+  console.log(newDatas);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get("/data/mock_data.json");
+      const imagesResponse = await axios.get(
+        `https://api.unsplash.com/search/photos/?page=${page}&per_page=${perpage}&order_by=latest&query=book&client_id=${process.env.REACT_APP_ACCESS_KEY}`
+      );
+      const images = imagesResponse.data.results.map(
+        (x: UrlProps) => x.urls.full
+      );
+
+      const datas: LectureData = {
+        fields: response.data.fields,
+        records: { items: response.data.records, images },
+      };
+
+      setLectureData(datas);
+    };
+    fetchData();
+  }, []);
+
   return (
-    <div className="">
+    <div>
       <Carousel
-        autoplay={true}
-        autoplaySpeed={7000}
+        autoplay={false}
+        autoplaySpeed={5000}
         pauseOnHover={true}
-        pauseOnDotsHover={true}
-        className="text-[#000] text-[2rem] ant-carousel"
+        className="text-[#000] text-[2rem] ant-carousel flex justify-center items-center w-[80%] mx-auto"
       >
         <div className="bg-[#fef188] h-[46rem] relative">
           <div className="text-[#000] bg-[#fff] absolute text-[3.6rem] top-[20%] left-[5%] font-bold p-[4rem] px-[8rem]">
@@ -55,6 +121,82 @@ const Home = () => {
           />
         </div>
       </Carousel>
+
+      <div className="w-[80%] mx-auto my-[4rem]">
+        <div className="my-[6rem]">
+          <h1 className="text-[3rem] my-[2rem]">광범위한 강의 모음</h1>
+          <p className="text-[2rem]">
+            <strong>
+              {new Intl.NumberFormat().format(records.items.length)}
+            </strong>
+            개 이상의 온라인 동영상 강의 중에서 선택하세요. 매월 새롭게 강의가
+            추가됩니다.
+          </p>
+        </div>
+
+        <div className="">
+          <div className="text-[3rem]">
+            <Slider
+              defaultValue={[0, 1000000]}
+              onChange={onChange}
+              min={0}
+              max={2000000}
+              step={1000}
+              range
+            />
+          </div>
+          <div className="grid grid-cols-3 gap-[3.6rem]">
+            {newDatas.map((x: any, index: string) => (
+              <div
+                key={index}
+                className="text-[2rem] font-medium border w-full h-full hover:shadow-lg cursor-pointer"
+              >
+                <img
+                  loading="lazy"
+                  src={x.imageUrl}
+                  alt="img"
+                  className="w-full h-[20rem] block object-cover"
+                />
+                <div className="flex flex-col p-[10%] text-center">
+                  <div className="text-[#1f1f1f] truncate">
+                    {x.itemData.강좌명}
+                  </div>
+
+                  <div className="font-bold">
+                    {x.itemData.수강료 === "0"
+                      ? "무료"
+                      : "₩" + x.itemData.수강료 + "원"}
+                  </div>
+                  <div className="text-[#6a6f73]">{x.itemData.교육장소}</div>
+                </div>
+
+                {/* <div>{x.itemData.강좌내용}</div> */}
+                {/* <div>{x.itemData.강의정원수}</div>
+                <div>{x.itemData.교육대상구분}</div>
+                <div>{x.itemData.교육방법구분}</div>
+                <div>{x.itemData.교육시작시각}</div>
+                <div>{x.itemData.교육시작일자}</div>
+                <div>{x.itemData.교육장도로명주소}</div>
+                <div>{x.itemData.교육장소}</div>
+                <div>{x.itemData.교육종료일자}</div>
+                <div>{x.itemData.수강료}원</div>
+                <div>{x.itemData.운영기관명}</div>
+                <div>{x.itemData.운영기관전화번호}</div>
+                <div>{x.itemData.운영요일}</div>
+                <div>{x.itemData.접수방법구분}</div>
+                <div>{x.itemData.접수시작일자}</div>
+                <div>{x.itemData.접수종료일자}</div>
+                <div>{x.itemData.제공기관명}</div>
+                <div>{x.itemData.제공기관코드}</div>
+                <div>{x.itemData.직업능력개발훈련비지원강좌여부}</div>
+                <div>{x.itemData.평생학습계좌제평가인정여부}</div>
+                <div>{x.itemData.홈페이지주소}</div> */}
+              </div>
+            ))}
+          </div>
+          <div className="text-[3.6rem] py-[5rem]">페이지 영역</div>
+        </div>
+      </div>
     </div>
   );
 };

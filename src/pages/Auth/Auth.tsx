@@ -25,7 +25,7 @@ const Auth = () => {
           <div className="py-[10%] px-[4%]">
             <h1 className="text-[2rem]">오늘의 교육</h1> <br />
             <p className="text-[2.6rem] font-semibold">
-              반가워요, 강의대여 서비스를 제공하는 <br /> 큐브입니다.
+              반가워요, 평생교육 서비스를 제공하는 <br /> 큐브입니다.
             </p>
           </div>
           <img
