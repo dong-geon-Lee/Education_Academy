@@ -31,7 +31,7 @@ const Home = () => {
   const [price, setPrice] = useState(0);
   const { records } = lectureData;
   const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.get("page");
+  const page: any = searchParams.get("page");
   const navigate = useNavigate();
 
   const onChange = (value: number | [number, number]) => {
@@ -52,6 +52,12 @@ const Home = () => {
     return combileData;
   });
 
+  const lists = lectureData.records.items.map((x: any) => x.강좌명);
+
+  console.log(
+    lists.filter((x) => "일본".split("").every((y) => x.includes(y)))
+  );
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get("/data/mock_data.json");
@@ -64,17 +70,46 @@ const Home = () => {
 
       const datas: LectureData = {
         fields: response.data.fields,
-        records: { items: response.data.records, images },
+        records: { items: response.data.records.slice(0, 100), images },
       };
 
-      const pageInt = page;
-      searchParams.set("page", String(pageInt));
+      searchParams.set("page", String(page));
       setSearchParams(searchParams);
       setLectureData(datas);
     };
 
     fetchData();
-  }, [page, searchParams]);
+  }, [page]);
+
+  // import { useQuery } from 'react-query';
+
+  // 이미지를 가져오는 비동기 함수
+  // const fetchImage = async (page, perpage) => {
+  //   const response = await axios.get(
+  //     `https://api.unsplash.com/search/photos/?page=${page}&per_page=${perpage}&order_by=latest&query=book&client_id=${process.env.REACT_APP_ACCESS_KEY}`
+  //   );
+  //   return response.data.results.map((x: UrlProps) => x.urls.full);
+  // };
+
+  // const Home = () => {
+  //   const { data: images, isLoading } = useQuery(['images', page, perpage], () =>
+  //     fetchImage(page, perpage)
+  //   );
+
+  //   if (isLoading) {
+  //     // 로딩 중 화면을 표시할 수 있습니다.
+  //     return <div>Loading...</div>;
+  //   }
+
+  //   // 이미지를 사용하여 화면을 렌더링합니다.
+  //   return (
+  //     <div>
+  //       {images.map((imageUrl) => (
+  //         <img src={imageUrl} alt="image" key={imageUrl} />
+  //       ))}
+  //     </div>
+  //   );
+  // };
 
   return (
     <div>
@@ -147,10 +182,10 @@ const Home = () => {
             <DatePicker.RangePicker className="flex-[0.5] mr-[10rem]" />
             <label>가격</label>
             <Slider
-              defaultValue={[0, 2000000]}
+              defaultValue={[0, 10000]}
               onChange={onChange}
               min={0}
-              max={2000000}
+              max={100000}
               step={1000}
               range
               className="flex-[0.8]"
@@ -206,7 +241,8 @@ const Home = () => {
           </div>
           <div className="text-[3.6rem] py-[5rem] flex justify-center">
             <Pagination
-              defaultCurrent={Number(page)}
+              current={parseInt(page)}
+              defaultCurrent={parseInt(page)}
               pageSize={perpage}
               pageSizeOptions={[10, 20, 30]}
               total={records.items.length}
